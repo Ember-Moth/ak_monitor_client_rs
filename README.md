@@ -26,8 +26,9 @@ Options:
   -i, --interval <INTERVAL>        采集间隔，单位为毫秒 (不建议低于 1000ms 与高于 5000ms) [default: 1000]
   -f, --fake-times <FAKE_TIMES>    虚假倍率 (随手改一改，全世界算力都在你手上) [default: 1]
       --debug                      Debug 日志输出
-      --tls                        开启 TLS 支持 (未支持)
+      --tls                        开启 TLS 支持
   -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 - `--name`： (非必须，建议设置) 主机名，将展示在面板上，默认为本机 Hostname
@@ -36,7 +37,7 @@ Options:
 - `--interval`： (非必须，不建议设置) 采集间隔，单位为毫秒 (不建议低于 1000ms 与高于 5000ms)
 - `--fake-times`： (非必须，不建议设置) 虚假倍率 (随手改一改，全世界算力都在你手上)
 - `--debug`： (非必须) Debug 日志输出
-- `--tls`： (非必须，未支持) 开启 TLS 支持
+- `--tls`： (非必须) 开启 TLS 支持
 - `--help`： 查看帮助
 
 下列例子均以 `GenshinMinecraft` 为 Auth Secret 连接至 `192.168.111.1:3090` 为例

@@ -41,11 +41,6 @@ jobs:
             target: aarch64-unknown-linux-musl
             bin: ak_monitor_client_rs
             command: build
-          - release_for: linux_i586_gnu
-            os: ubuntu-latest
-            target: i586-unknown-linux-gnu
-            bin: ak_monitor_client_rs
-            command: build
           - release_for: linux_i686_gnu
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
@@ -54,11 +49,6 @@ jobs:
           - release_for: linux_i686_musl
             os: ubuntu-latest
             target: i686-unknown-linux-musl
-            bin: ak_monitor_client_rs
-            command: build
-          - release_for: linux_i586_musl
-            os: ubuntu-latest
-            target: i586-unknown-linux-musl
             bin: ak_monitor_client_rs
             command: build
           - release_for: linux_arm_gnueabi

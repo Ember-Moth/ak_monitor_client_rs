@@ -29,7 +29,7 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     pub debug: bool,
 
-    /// 开启 TLS 支持 (未支持)
+    /// 开启 TLS 支持 
     #[arg(long, default_value_t = false)]
     pub tls: bool,
 }
