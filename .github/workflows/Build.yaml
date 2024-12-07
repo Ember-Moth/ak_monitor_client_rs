@@ -116,6 +116,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: "--locked --release"
           strip: true
+      - name: Install UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+      - name: UPX version
+        run: upx --version
       - name: Compress binary
         run: upx --best target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
       - name: Upload binary
