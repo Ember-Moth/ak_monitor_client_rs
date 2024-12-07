@@ -22,15 +22,16 @@ Akile Monitor Rust Client
 Usage: 
 
 Options:
-  -n, --name <NAME>                主机名，将展示在面板上，默认为本机 Hostname [default: GenArch]
-  -s, --server <SERVER>            主端地址，需要 ip:port (Demo: 192.168.111.1:3000)
-  -a, --auth-secret <AUTH_SECRET>  在主端设置的 Auth Secret
-  -i, --interval <INTERVAL>        采集间隔，单位为毫秒 (不建议低于 1000ms 与高于 5000ms) [default: 1000]
-  -f, --fake-times <FAKE_TIMES>    虚假倍率 (随手改一改，全世界算力都在你手上) [default: 1]
-      --debug                      Debug 日志输出
-      --tls                        开启 TLS 支持
-  -h, --help                       Print help
-  -V, --version                    Print version
+  -n, --name <NAME>                  主机名，将展示在面板上，默认为本机 Hostname [default: GenArch]
+  -s, --server <SERVER>              主端地址，(Demo: 192.168.111.1:3000)
+  -a, --auth-secret <AUTH_SECRET>    在主端设置的 Auth Secret
+  -i, --interval <INTERVAL>          采集间隔，单位为 ms [default: 1000]
+  -f, --fake-times <FAKE_TIMES>      虚假倍率 [default: 1]
+      --debug                        Debug 日志输出
+      --tls                          开启 TLS 支持
+      --monitor-path <MONITOR_PATH>  Monitor 路径 [default: monitor]
+  -h, --help                         Print help
+  -V, --version                      Print version
 ```
 
 - `--name`： (非必须，建议设置) 主机名，将展示在面板上，默认为本机 Hostname
@@ -40,7 +41,10 @@ Options:
 - `--fake-times`： (非必须，不建议设置) 虚假倍率 (随手改一改，全世界算力都在你手上)
 - `--debug`： (非必须) Debug 日志输出
 - `--tls`： (非必须) 开启 TLS 支持
+- `--monitor-path`: (非必须) 自定义 Monitor 路径，即为 `ws://ip:port/monitor` 中的 `monitor`
 - `--help`： 查看帮助
+
+### Examples
 
 下列例子均以 `GenshinMinecraft` 为 Auth Secret 连接至 `192.168.111.1:3090` 为例
 

@@ -5,7 +5,6 @@ mod model;
 
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, info};
-use rustls::crypto::CryptoProvider;
 use tokio_tungstenite::{connect_async, connect_async_tls_with_config, tungstenite::protocol::Message};
 
 use crate::args::Args;
@@ -26,7 +25,7 @@ async fn main() {
 
     loop {
         let (ws_stream, _) = if !args.tls {
-            let url_str = format!("ws://{}/monitor", args.server);
+            let url_str = format!("ws://{}/{}", args.server, args.monitor_path);
             info!("自动构建 WebSocket URL 为: {}", url_str);
             match connect_async(url_str.clone()).await {
             Ok(s) => s,
@@ -37,7 +36,7 @@ async fn main() {
             }
             }
         } else {
-            let url_str = format!("wss://{}/monitor", args.server);
+            let url_str = format!("wss://{}/{}", args.server, args.monitor_path);
             info!("自动构建 WebSocket URL 为: {}", url_str);
             match connect_async_tls_with_config(url_str.clone(), None, false, None).await {
                 Ok(s) => s,

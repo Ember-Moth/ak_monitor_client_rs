@@ -9,7 +9,7 @@ pub struct Args {
     #[arg(short, long, default_value_t = get_hostname())]
     pub name: String,
 
-    /// 主端地址，需要 ip:port (Demo: 192.168.111.1:3000)
+    /// 主端地址，(Demo: 192.168.111.1:3000)
     #[arg(short, long)]
     pub server: String,
 
@@ -17,11 +17,11 @@ pub struct Args {
     #[arg(short, long)]
     pub auth_secret: String,
 
-    /// 采集间隔，单位为毫秒 (不建议低于 1000ms 与高于 5000ms)
+    /// 采集间隔，单位为 ms
     #[arg(short, long, default_value_t = 1000)]
     pub interval: u64,
 
-    /// 虚假倍率 (随手改一改，全世界算力都在你手上)
+    /// 虚假倍率
     #[arg(short, long, default_value_t = 1)]
     pub fake_times: u64,
 
@@ -32,6 +32,10 @@ pub struct Args {
     /// 开启 TLS 支持 
     #[arg(long, default_value_t = false)]
     pub tls: bool,
+    
+    /// Monitor 路径 
+    #[arg(long, default_value_t = String::from("monitor"))]
+    pub monitor_path: String,
 }
 impl Args {
     pub fn init_args() -> Args {
