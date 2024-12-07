@@ -120,4 +120,17 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform.target }}
-          path: target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}  
+          path: target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+      - name: Publish to GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+          tag_name: latest  # 使用固定的标签名称作为发布版本号
+          body: |
+            Latest release for ${{ matrix.platform.release_for }} (Commit: ${{ github.sha }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
