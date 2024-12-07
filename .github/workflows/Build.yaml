@@ -117,7 +117,7 @@ jobs:
           args: "--locked --release"
           strip: true
       - name: Compress binary
-        run: upx --ultra-brute target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+        run: upx --best target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:
