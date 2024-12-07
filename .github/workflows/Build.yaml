@@ -129,7 +129,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}
           tag_name: latest  # 使用固定的标签名称作为发布版本号
           body: |
             Latest release for Commit: ${{ github.sha }}
