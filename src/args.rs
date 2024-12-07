@@ -5,11 +5,11 @@ use clap::Parser;
 #[derive(Parser, Debug, Clone)]
 #[command(version, about, long_about = None)]
 pub struct Args {
-    /// 主机名，将展示在面板上，默认为本机 Hostname
+    /// 主机名, 将展示在面板上, 默认为本机 Hostname
     #[arg(short, long, default_value_t = get_hostname())]
     pub name: String,
 
-    /// 主端地址，(Demo: 192.168.111.1:3000)
+    /// 主端地址, (Demo: 192.168.111.1:3000)
     #[arg(short, long)]
     pub server: String,
 
@@ -17,7 +17,7 @@ pub struct Args {
     #[arg(short, long)]
     pub auth_secret: String,
 
-    /// 采集间隔，单位为 ms
+    /// 采集间隔, 单位为 ms
     #[arg(short, long, default_value_t = 1000)]
     pub interval: u64,
 
@@ -40,6 +40,10 @@ pub struct Args {
     /// Install 模式
     #[arg(long, default_value_t = false)]
     pub install: bool,
+
+    /// Uninstall 模式
+    #[arg(long, default_value_t = false)]
+    pub uninstall: bool,
 }
 impl Args {
     pub fn init_args() -> Args {

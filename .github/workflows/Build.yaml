@@ -108,7 +108,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install Lib
-        run: sudo apt update && sudo apt install -y musl-tools musl-dev musl
+        run: sudo apt update && sudo apt install -y musl-tools musl-dev musl upx
       - name: Build binary
         uses: houseabsolute/actions-rust-cross@v0
         with:
@@ -116,6 +116,8 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: "--locked --release"
           strip: true
+      - name: Compress binary
+        run: upx --ultra-brute target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:

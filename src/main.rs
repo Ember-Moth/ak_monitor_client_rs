@@ -4,8 +4,10 @@ mod get_info;
 mod install;
 mod model;
 
+use std::process::exit;
 use futures_util::{SinkExt, StreamExt};
-use log::{debug, info};
+use futures_util::future::err;
+use log::{debug, error, info};
 use tokio_tungstenite::{
     connect_async, connect_async_tls_with_config, tungstenite::protocol::Message,
 };
@@ -26,9 +28,15 @@ async fn main() {
         info!("服务正在启动")
     }
 
-    if args.install {
-        info!("检测到 --install 参数，正在进入安装模式");
+    if args.install && args.uninstall {
+        error!("朋友你要上天啊，先安装再卸载还是先卸载再安装？");
+        exit(1);
+    } else if args.install {
+        info!("检测到 --install 参数, 正在进入安装模式");
         install::install_to_systemd(args.clone());
+    } else if args.uninstall {
+        info!("检测到 --uninstall 参数, 正在进入卸载模式");
+        install::uninstall_from_systemd();
     }
 
     loop {
@@ -38,7 +46,7 @@ async fn main() {
             match connect_async(url_str.clone()).await {
                 Ok(s) => s,
                 Err(e) => {
-                    log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
+                    log::error!("WebSocket 连接失败, 5 秒后重试: {}", e);
                     tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                     continue;
                 }
@@ -49,7 +57,7 @@ async fn main() {
             match connect_async_tls_with_config(url_str.clone(), None, false, None).await {
                 Ok(s) => s,
                 Err(e) => {
-                    log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
+                    log::error!("WebSocket 连接失败, 5 秒后重试: {}", e);
                     tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                     continue;
                 }
@@ -64,7 +72,7 @@ async fn main() {
         {
             Ok(_) => {}
             Err(e) => {
-                log::error!("WebSocket 发送验证信息失败，5 秒后重试: {}", e);
+                log::error!("WebSocket 发送验证信息失败, 5 秒后重试: {}", e);
                 tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                 continue;
             }
@@ -75,7 +83,7 @@ async fn main() {
                 info!("WebSocket 连接验证成功");
             }
         } else {
-            log::error!("WebSocket 连接验证失败，也许是 Auth Secret 错误，5 秒后重试");
+            log::error!("WebSocket 连接验证失败, 也许是 Auth Secret 错误, 5 秒后重试");
             tokio::time::sleep(std::time::Duration::from_secs(5)).await;
             continue;
         }
@@ -91,7 +99,7 @@ async fn main() {
                     debug!("WebSocket 数据上传成功");
                 }
                 Err(e) => {
-                    log::error!("WebSocket 发送本机数据失败，5 秒后重试: {}", e);
+                    log::error!("WebSocket 发送本机数据失败, 5 秒后重试: {}", e);
                     tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                     break;
                 }

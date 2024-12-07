@@ -1,26 +1,52 @@
 use crate::args::Args;
 use log::{error, info, warn};
 use std::fs::File;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::process::{exit, Command};
 use std::{env, fs, io};
+
+#[derive(Debug)]
+enum PID1 {
+    Systemd,
+    OpenRC
+}
+pub fn check_pid1() -> PID1 {
+    let pid1_path = "/proc/1/comm";
+    let mut pid1_file = match File::open(pid1_path) {
+        Ok(file) => file,
+        Err(e) => {
+            error!("无法获取守护进程信息: {}", e);
+            exit(1);
+        },
+    };
+    let mut string_of_pid1 = String::new();
+    match pid1_file.read_to_string(&mut string_of_pid1) {
+        Ok(_) => {}
+        Err(e) => {
+            error!("无法读取 /proc/1/comm: {}", e);
+            exit(1);
+        },
+    };
+
+    let pid1 = if string_of_pid1 == "systemd" {
+        PID1::Systemd
+    } else if string_of_pid1 == "openrc" || string_of_pid1 == "init" {
+        PID1::OpenRC
+    } else { 
+        error!("无法识别守护进程, 退出！");
+        exit(1);
+    };
+
+    println!("检测到守护进程: {:?}", pid1);
+
+    pid1
+}
 
 pub fn install_to_systemd(args: Args) {
     // 检查操作系统是否为 Linux
     if env::consts::OS != "linux" {
         error!("Install 功能仅适用于 Linux 系统");
         exit(1);
-    }
-
-    // 检查系统是否使用 Systemd
-    match fs::metadata("/usr/bin/systemctl") {
-        Ok(_) => {
-            info!("您的系统使用的是 Systemd 服务管理器, 可以正常使用 Install 功能")
-        }
-        Err(_) => {
-            error!("您的系统并非使用 Systemd 作为服务管理器, 无法使用 Install 功能, 请自行配置进程守护");
-            exit(1);
-        }
     }
 
     if env::var("USER") == Ok("root".to_string()) {
@@ -32,21 +58,9 @@ pub fn install_to_systemd(args: Args) {
 
     // 检查是否已存在相同名称的服务文件
     match fs::metadata("/etc/systemd/system/akile_monitor_client.service") {
-        Ok(_) => loop {
-            warn!("您的当前系统曾经配置过 Systemd 保活服务, 是否覆盖? (Y/N)");
-            let mut input = String::new();
-            io::stdin().read_line(&mut input).unwrap();
-            input = input.trim().to_uppercase();
-
-            if input == "Y" {
-                info!("正在为您覆盖先前的文件");
-                break;
-            } else if input == "N" {
-                info!("不覆盖, 退出程序");
-                exit(1);
-            } else {
-                warn!("输入错误, 请重新输入 Y 或 N。");
-            }
+        Ok(_) => {
+            error!("已存在相同名称的服务文件, 请先使用 `--uninstall` 参数卸载后再安装");
+            exit(1);
         },
         Err(_) => {}
     }
@@ -212,4 +226,85 @@ Restart=always
             warn!("输入错误, 请重新输入 Y 或 N。");
         }
     }
+}
+
+pub fn uninstall_from_systemd() {
+    info!("开始卸载 Akile Monitor Client Service");
+
+    if env::var("USER") == Ok("root".to_string()) {
+        info!("正在使用 root 用户");
+    } else {
+        error!("非 root 用户, 请使用 root 用户运行 Uninstall 功能");
+        exit(1);
+    }
+
+    match Command::new("systemctl")
+        .arg("stop")
+        .arg("akile_monitor_client.service")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功停止 Akile Monitor Client Service");
+            } else {
+                warn!("无法停止 Akile Monitor Client Service")
+            }
+        }
+        Err(e) => {
+            warn!("无法停止 Akile Monitor Client Service: {}", e);
+            exit(1);
+        }
+    }
+
+    match Command::new("systemctl")
+        .arg("disable")
+        .arg("akile_monitor_client.service")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功关闭开机自启");
+            } else {
+                warn!("无法关闭开机自启")
+            }
+        }
+        Err(e) => {
+            warn!("无法关闭开机自启: {}", e);
+            exit(1);
+        }
+    }
+
+    match fs::remove_file("/etc/systemd/system/akile_monitor_client.service") {
+        Ok(_) => {
+            info!("成功删除 /etc/systemd/system/akile_monitor_client.service");
+        }
+        Err(e) => {
+            warn!(
+                "无法删除 /etc/systemd/system/akile_monitor_client.service: {}",
+                e
+            );
+        }
+    }
+    match Command::new("systemctl").arg("daemon-reload").output() {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功运行 systemctl daemon-reload");
+            } else {
+                warn!("无法运行 systemctl daemon-reload")
+            }
+        }
+        Err(e) => {
+            warn!("无法运行 systemctl daemon-reload: {}", e);
+        }
+    }
+    match fs::remove_file("/usr/local/bin/akile_monitor_client_rs") {
+        Ok(_) => {
+            info!("成功删除 /usr/local/bin/akile_monitor_client_rs");
+        }
+        Err(e) => {
+            warn!("无法删除 /usr/local/bin/akile_monitor_client_rs: {}", e);
+        }
+    }
+    info!("成功卸载 Akile Monitor Client Service");
+    exit(1);
 }
