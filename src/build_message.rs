@@ -39,10 +39,10 @@ pub async fn build_host_state(sys: &System, fake_times: u64) -> HostState {
         CPU: cpu_usage,
         MemUsed: mem_info.2 * fake_times,
         SwapUsed: mem_info.5 * fake_times,
-        NetInTransfer: network_info.1 * fake_times,
-        NetOutTransfer: network_info.0 * fake_times,
-        NetInSpeed: network_info.3 * fake_times,
-        NetOutSpeed: network_info.2 * fake_times,
+        NetInTransfer: network_info.0 * fake_times,
+        NetOutTransfer: network_info.1 * fake_times,
+        NetInSpeed: network_info.2 * fake_times,
+        NetOutSpeed: network_info.3 * fake_times,
         Uptime: load.0,
         Load1: format!("{:.2}", load.1 * fake_times as f64)
             .parse()
