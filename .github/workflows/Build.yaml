@@ -121,6 +121,9 @@ jobs:
         with:
           name: ${{ matrix.platform.target }}
           path: target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+      - name: Rename binary
+        run:
+          cp target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }} target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}
       - name: Publish to GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
@@ -129,7 +132,7 @@ jobs:
             target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
           tag_name: latest  # 使用固定的标签名称作为发布版本号
           body: |
-            Latest release for ${{ matrix.platform.release_for }} (Commit: ${{ github.sha }})
+            Latest release for Commit: ${{ github.sha }}
           draft: false
           prerelease: false
         env:
