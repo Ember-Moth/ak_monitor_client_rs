@@ -6,7 +6,9 @@
 
 ## 下载
 
-请前往本项目的 [Action](https://github.com/GenshinMinecraft/ak_monitor_client_rs/actions) 处下载，请注意 Github Action 下载需 Github 账号
+请前往本项目的 [Release](https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/tag/latest) 处下载
+
+每次 Push 将会自动构建并推送到该 Tag，所以直接右键获取的文件链接是永久性的
 
 挑选对应架构的压缩文件下载解压上传至服务器即可使用
 
