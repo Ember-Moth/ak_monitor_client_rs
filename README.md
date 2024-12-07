@@ -17,33 +17,24 @@
 不论何时何地, 你都可以使用 `--help` 参数以查阅帮助信息
 
 ```
-Akile Monitor Rust Client
+Akile Monitor Client By Rust
 
 Usage: 
 
 Options:
-  -n, --name <NAME>                  主机名, 将展示在面板上, 默认为本机 Hostname [default: GenArch]
+  -n, --name <NAME>                  主机名, 将展示在面板上, 默认为本机 Hostname
   -s, --server <SERVER>              主端地址, (Demo: 192.168.111.1:3000)
   -a, --auth-secret <AUTH_SECRET>    在主端设置的 Auth Secret
-  -i, --interval <INTERVAL>          采集间隔, 单位为 ms [default: 1000]
-  -f, --fake-times <FAKE_TIMES>      虚假倍率 [default: 1]
-      --debug                        Debug 日志输出
-      --tls                          开启 TLS 支持
-      --monitor-path <MONITOR_PATH>  Monitor 路径 [default: monitor]
+  -i, --interval <INTERVAL>          采集间隔, 单位为 ms
+  -f, --fake-times <FAKE_TIMES>      虚假倍率
+      --debug <DEBUG>                Debug 日志输出 [possible values: true, false]
+      --tls <TLS>                    开启 TLS 支持 [possible values: true, false]
+      --monitor-path <MONITOR_PATH>  Monitor 路径
+      --install                      Install 模式
+      --uninstall                    Uninstall 模式
   -h, --help                         Print help
   -V, --version                      Print version
 ```
-
-- `--name`： (非必须, 建议设置) 主机名, 将展示在面板上, 默认为本机 Hostname
-- `--server`： (必须) 主端地址, 需要 ip:port (Demo: 192.168.111.1:3000)
-- `--auth-secret`： (必须) 在主端设置的 Auth Secret
-- `--interval`： (非必须, 不建议设置) 采集间隔, 单位为毫秒 (不建议低于 1000ms 与高于 5000ms)
-- `--fake-times`： (非必须, 不建议设置) 虚假倍率 (随手改一改, 全世界算力都在你手上)
-- `--debug`： (非必须) Debug 日志输出
-- `--tls`： (非必须) 开启 TLS 支持
-- `--monitor-path`: (非必须) 自定义 Monitor 路径, 即为 `ws://ip:port/monitor` 中的 `monitor`
-- `--install`: (非必须) 安装服务, 详情请见下文`保活`部分
-- `--help`： 查看帮助
 
 ### Examples
 
@@ -77,6 +68,10 @@ Options:
 - 安装并连接, 并设置上报间隔时间为 `2400ms`, 设置设置虚假倍率为 `2`, 设置主机名为 `GenArch`:
 ```bash
 ./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -n GenArch -f 2 -i 2400 --install
+```
+- 卸载:
+```bash
+./ak_monitor_client_rs --uninstall
 ```
 
 ## 与原版相比之优势
@@ -112,6 +107,16 @@ Options:
 ![360335e73aa8c82806089336754039bb.png](https://ice.frostsky.com/2024/12/07/360335e73aa8c82806089336754039bb.png)
 
 这样便完成了安装保活
+
+## 卸载
+
+保活完了想卸载？ 来让 Uninstall 功能帮你！
+
+你只需要直接在可执行文件后加上 `--uninstall` 参数, 就会进入 Uninstall 模式并**自动删除服务文件**
+
+```bash
+./ak_monitor_client_rs --uninstall
+```
 
 ## 鸣谢
 - [Akile Monitor](https://github.com/akile-network/akile_monitor)

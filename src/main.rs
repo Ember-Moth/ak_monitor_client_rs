@@ -4,39 +4,63 @@ mod get_info;
 mod install;
 mod model;
 
-use std::process::exit;
-use futures_util::{SinkExt, StreamExt};
 use futures_util::future::err;
+use futures_util::{SinkExt, StreamExt};
 use log::{debug, error, info};
+use std::process::exit;
 use tokio_tungstenite::{
     connect_async, connect_async_tls_with_config, tungstenite::protocol::Message,
 };
 
-use crate::args::Args;
+use crate::args::*;
 use crate::build_message::{build_host, build_host_state, build_post_gziped_json};
 use sysinfo::System;
+use crate::install::{check_pid1, PID1};
 
 #[tokio::main]
 async fn main() {
-    let args = Args::init_args();
+    let args = Args_cli::init_args();
 
+    if args.install && args.uninstall {
+        simple_logger::init_with_level(log::Level::Debug).unwrap();
+        error!("朋友你要上天啊，先安装再卸载 还是 先卸载再安装？");
+        exit(1);
+    } else if args.install {
+        simple_logger::init_with_level(log::Level::Debug).unwrap();
+        info!("检测到 --install 参数, 正在进入安装模式");
+        match check_pid1() {
+            PID1::Systemd => {
+                info!("检测到 SystemD");
+                install::install_to_systemd(args.clone().to_args());
+            }
+            PID1::OpenRC => {
+                info!("检测到 OpenRC");
+                install::install_to_openrc(args.clone().to_args());
+            }
+        }
+
+    } else if args.uninstall {
+        simple_logger::init_with_level(log::Level::Debug).unwrap();
+        info!("检测到 --uninstall 参数, 正在进入卸载模式");
+        match check_pid1() {
+            PID1::Systemd => {
+                info!("检测到 SystemD");
+                install::uninstall_from_systemd();
+            }
+            PID1::OpenRC => {
+                info!("检测到 OpenRC");
+                install::uninstall_from_openrc();
+            }
+        }
+    }
+
+    let args = args.to_args();
     if args.debug {
         simple_logger::init_with_level(log::Level::Debug).unwrap();
         info!("服务正在启动")
     } else {
         simple_logger::init_with_level(log::Level::Info).unwrap();
         info!("服务正在启动")
-    }
-
-    if args.install && args.uninstall {
-        error!("朋友你要上天啊，先安装再卸载还是先卸载再安装？");
-        exit(1);
-    } else if args.install {
-        info!("检测到 --install 参数, 正在进入安装模式");
-        install::install_to_systemd(args.clone());
-    } else if args.uninstall {
-        info!("检测到 --uninstall 参数, 正在进入卸载模式");
-        install::uninstall_from_systemd();
     }
 
     loop {

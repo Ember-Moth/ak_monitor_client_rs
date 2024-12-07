@@ -28,6 +28,6 @@ simple_logger = "5.0.0"
 [profile.release]
 lto = true
 strip = true
-
-[build]
-rustflags = ["-C", "opt-level=z", "-C", "panic=abort"]
+codegen-units = 1
+opt-level = "z"
+panic = "abort"

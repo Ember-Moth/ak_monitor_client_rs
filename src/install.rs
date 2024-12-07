@@ -6,9 +6,9 @@ use std::process::{exit, Command};
 use std::{env, fs, io};
 
 #[derive(Debug)]
-enum PID1 {
+pub enum PID1 {
     Systemd,
-    OpenRC
+    OpenRC,
 }
 pub fn check_pid1() -> PID1 {
     let pid1_path = "/proc/1/comm";
@@ -17,7 +17,7 @@ pub fn check_pid1() -> PID1 {
         Err(e) => {
             error!("无法获取守护进程信息: {}", e);
             exit(1);
-        },
+        }
     };
     let mut string_of_pid1 = String::new();
     match pid1_file.read_to_string(&mut string_of_pid1) {
@@ -25,14 +25,14 @@ pub fn check_pid1() -> PID1 {
         Err(e) => {
             error!("无法读取 /proc/1/comm: {}", e);
             exit(1);
-        },
+        }
     };
 
-    let pid1 = if string_of_pid1 == "systemd" {
+    let pid1 = if string_of_pid1 == "systemd\n" {
         PID1::Systemd
-    } else if string_of_pid1 == "openrc" || string_of_pid1 == "init" {
+    } else if string_of_pid1 == "openrc\n" || string_of_pid1 == "init\n" {
         PID1::OpenRC
-    } else { 
+    } else {
         error!("无法识别守护进程, 退出！");
         exit(1);
     };
@@ -61,7 +61,7 @@ pub fn install_to_systemd(args: Args) {
         Ok(_) => {
             error!("已存在相同名称的服务文件, 请先使用 `--uninstall` 参数卸载后再安装");
             exit(1);
-        },
+        }
         Err(_) => {}
     }
 
@@ -122,19 +122,6 @@ Restart=always
     let service_string = template.replace("COMMAND", &command);
     info!("最终服务文件: ");
     println!("{}", service_string);
-
-    // 删除旧的服务文件
-    match fs::remove_file("/etc/systemd/system/akile_monitor_client.service") {
-        Ok(_) => {
-            info!("成功删除 /etc/systemd/system/akile_monitor_client.service");
-        }
-        Err(e) => {
-            error!(
-                "无法删除 /etc/systemd/system/akile_monitor_client.service: {}",
-                e
-            );
-        }
-    }
 
     // 创建并写入新的服务文件
     let mut service_file = match File::create("/etc/systemd/system/akile_monitor_client.service") {
@@ -297,12 +284,271 @@ pub fn uninstall_from_systemd() {
             warn!("无法运行 systemctl daemon-reload: {}", e);
         }
     }
-    match fs::remove_file("/usr/local/bin/akile_monitor_client_rs") {
+    match fs::remove_file("/usr/bin/akile_monitor_client_rs") {
         Ok(_) => {
-            info!("成功删除 /usr/local/bin/akile_monitor_client_rs");
+            info!("成功删除 /usr/bin/akile_monitor_client_rs");
         }
         Err(e) => {
-            warn!("无法删除 /usr/local/bin/akile_monitor_client_rs: {}", e);
+            warn!("无法删除 /usr/bin/akile_monitor_client_rs: {}", e);
+        }
+    }
+    info!("成功卸载 Akile Monitor Client Service");
+    exit(1);
+}
+
+pub fn install_to_openrc(args: Args) {
+    // 检查操作系统是否为 Linux
+    if env::consts::OS != "linux" {
+        error!("Install 功能仅适用于 Linux 系统");
+        exit(1);
+    }
+
+    if env::var("USER") == Ok("root".to_string()) {
+        info!("正在使用 root 用户");
+    } else {
+        error!("非 root 用户, 请使用 root 用户运行 Install 功能");
+        exit(1);
+    }
+
+    // 检查是否已存在相同名称的服务文件
+    match fs::metadata("/etc/init.d/akile_monitor_client_rs") {
+        Ok(_) => {
+            error!("已存在相同名称的服务文件, 请先使用 `--uninstall` 参数卸载后再安装");
+            exit(1);
+        }
+        Err(_) => {}
+    }
+
+    // 复制可执行文件到 /usr/bin
+    match env::current_exe() {
+        Ok(path_to_bin) => {
+            if path_to_bin.to_str().unwrap() == "/usr/bin/ak_monitor_client_rs" {
+                info!("无需复制可执行文件");
+            } else {
+                match fs::copy(path_to_bin, "/usr/bin/ak_monitor_client_rs") {
+                    Ok(_) => {
+                        info!("成功将可执行文件复制到 /usr/bin/ak_monitor_client_rs");
+                    }
+                    Err(e) => {
+                        error!(
+                            "无法将可执行文件复制到 /usr/bin/ak_monitor_client_rs: {}",
+                            e
+                        );
+                        exit(1);
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            error!("无法获取可执行文件路径: {}", e);
+            exit(1);
+        }
+    }
+
+    let template = r#"#!/sbin/openrc-run
+
+command=/usr/bin/ak_monitor_client_rs
+command_args="COMMAND_ARGS_HERE"
+pidfile=/run/$SERVICE_NAME.pid
+description="Akile Monitor Slave Client (Rust) Service"
+
+depend() {
+    need net
+    after firewall
+}
+
+start() {
+    ebegin "Starting $SERVICE_NAME"
+    start-stop-daemon --start --background --make-pidfile --pidfile \$pidfile --exec \$command -- \$command_args
+    eend \$?
+}
+
+stop() {
+    ebegin "Stopping $SERVICE_NAME"
+    start-stop-daemon --stop --pidfile \$pidfile
+    eend \$?
+}
+
+restart() {
+    stop
+    start
+}
+"#;
+    let debug_ = if args.debug { "--debug" } else { "" };
+
+    let tls = if args.tls { "--tls" } else { "" };
+
+    let command = format!(
+        "{} {} -n \"{}\" -s \"{}\" -a \"{}\" -i {} -f {} --monitor-path \"{}\"",
+        debug_,
+        tls,
+        args.name,
+        args.server,
+        args.auth_secret,
+        args.interval,
+        args.fake_times,
+        args.monitor_path
+    );
+
+    let service_string = template.replace("COMMAND_ARGS_HERE", &command);
+    info!("最终服务文件: ");
+    println!("{}", service_string);
+
+    // 创建并写入新的服务文件
+    let mut service_file = match File::create("/etc/init.d/akile_monitor_client_rs") {
+        Ok(tmp) => tmp,
+        Err(e) => {
+            error!("无法新建 /etc/init.d/akile_monitor_client_rs: {}", e);
+            exit(1);
+        }
+    };
+
+    match service_file.write_all(service_string.as_bytes()) {
+        Ok(_) => {
+            info!("成功写入 OpenRC 配置文件")
+        }
+        Err(e) => {
+            error!("无法写入 OpenRC 配置文件: {}", e);
+            exit(1);
+        }
+    }
+
+    match Command::new("chmod")
+        .arg("+x")
+        .arg("/etc/init.d/akile_monitor_client_rs")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功设置 /etc/init.d/akile_monitor_client_rs 为可执行文件");
+            } else {
+                warn!("无法设置 /etc/init.d/akile_monitor_client_rs 为可执行文件")
+            }
+        }
+        Err(e) => {
+            warn!(
+                "无法设置 /etc/init.d/akile_monitor_client_rs 为可执行文件: {}",
+                e
+            );
+        }
+    }
+
+    // 询问用户是否开启开机自启动
+    loop {
+        info!("是否打开开机自启? (Y/N)");
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        input = input.trim().to_uppercase();
+
+        if input == "Y" {
+            match Command::new("rc-update")
+                .arg("add")
+                .arg("akile_monitor_client_rs")
+                .arg("default")
+                .output()
+            {
+                Ok(tmp) => {
+                    if tmp.status.success() {
+                        info!("成功打开开机自启");
+                    } else {
+                        error!("无法打开开机自启")
+                    }
+                }
+                Err(e) => {
+                    error!("无法打开开机自启: {}", e);
+                    exit(1);
+                }
+            }
+            break;
+        } else if input == "N" {
+            info!("不打开开机自启");
+            break;
+        } else {
+            warn!("输入错误, 请重新输入 Y 或 N。");
+        }
+    }
+
+    match Command::new("/etc/init.d/akile_monitor_client_rs")
+        .arg("start")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("服务安装完成, 成功启动服务");
+                exit(0);
+            } else {
+                error!("无法启动服务");
+                exit(1);
+            }
+        }
+        Err(e) => {
+            error!("无法启动服务: {}", e);
+            exit(1);
+        }
+    }
+}
+
+pub fn uninstall_from_openrc() {
+    info!("开始卸载 Akile Monitor Client Service");
+
+    if env::var("USER") == Ok("root".to_string()) {
+        info!("正在使用 root 用户");
+    } else {
+        error!("非 root 用户, 请使用 root 用户运行 Uninstall 功能");
+        exit(1);
+    }
+
+    match Command::new("/etc/init.d/akile_monitor_client_rs")
+        .arg("stop")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功停止 Akile Monitor Client Service");
+            } else {
+                warn!("无法停止 Akile Monitor Client Service")
+            }
+        }
+        Err(e) => {
+            warn!("无法停止 Akile Monitor Client Service: {}", e);
+            exit(1);
+        }
+    }
+
+    match Command::new("rc-update")
+        .arg("del")
+        .arg("akile_monitor_client_rs")
+        .arg("default")
+        .output()
+    {
+        Ok(tmp) => {
+            if tmp.status.success() {
+                info!("成功关闭开机自启");
+            } else {
+                warn!("无法关闭开机自启")
+            }
+        }
+        Err(e) => {
+            warn!("无法关闭开机自启: {}", e);
+            exit(1);
+        }
+    }
+
+    match fs::remove_file("/etc/init.d/akile_monitor_client_rs") {
+        Ok(_) => {
+            info!("成功删除 /etc/init.d/akile_monitor_client_rs");
+        }
+        Err(e) => {
+            warn!("无法删除 /etc/init.d/akile_monitor_client_rs: {}", e);
+        }
+    }
+
+    match fs::remove_file("/usr/bin/akile_monitor_client_rs") {
+        Ok(_) => {
+            info!("成功删除 /usr/bin/akile_monitor_client_rs");
+        }
+        Err(e) => {
+            warn!("无法删除 /usr/bin/akile_monitor_client_rs: {}", e);
         }
     }
     info!("成功卸载 Akile Monitor Client Service");
