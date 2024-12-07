@@ -123,7 +123,7 @@ jobs:
       - name: UPX version
         run: upx --version
       - name: Compress binary
-        run: upx --best target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+        run: upx --ultra-brute target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:
