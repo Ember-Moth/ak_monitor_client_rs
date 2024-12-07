@@ -94,7 +94,7 @@ Restart=always
     let tls = if args.tls { "--tls" } else { "" };
 
     let command = format!(
-        "/usr/bin/ak_monitor_client_rs {} {} -n {} -s {} -a {} -i {} -f {} --monitor-path {}",
+        "/usr/bin/ak_monitor_client_rs {} {} -n \"{}\" -s \"{}\" -a \"{}\" -i {} -f {} --monitor-path \"{}\"",
         debug_,
         tls,
         args.name,
