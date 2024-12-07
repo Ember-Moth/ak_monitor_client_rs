@@ -5,7 +5,7 @@ mod model;
 
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, info};
-use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
+use tokio_tungstenite::{connect_async, connect_async_tls_with_config, tungstenite::protocol::Message};
 
 use crate::args::Args;
 use crate::build_message::{build_host, build_host_state, build_post_gziped_json};
@@ -27,12 +27,23 @@ async fn main() {
     info!("自动构建 WebSocket URL 为: {}", url_str);
 
     loop {
-        let (ws_stream, _) = match connect_async(url_str.clone()).await {
+        let (ws_stream, _) = if !args.tls {
+            match connect_async(url_str.clone()).await {
             Ok(s) => s,
             Err(e) => {
                 log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
                 tokio::time::sleep(std::time::Duration::from_secs(5)).await;
                 continue;
+            }
+            }
+        } else {
+            match connect_async_tls_with_config(url_str.clone(), None, false, None).await {
+                Ok(s) => s,
+                Err(e) => {
+                    log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
+                    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                    continue;
+                }
             }
         };
 

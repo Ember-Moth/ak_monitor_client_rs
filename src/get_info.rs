@@ -38,7 +38,7 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
     }
 
     let arch = whoami::arch().to_string();
-    let virt = detect().await.unwrap_or_else(|| Virtualization::Unknown);
+    let virt = detect().await.unwrap_or(Virtualization::Unknown);
 
     let mut cpu_name: Vec<String> = Vec::new();
     if virt.is_vm() || virt.is_container() {
@@ -50,8 +50,12 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
             cpu_name.push(format!("{} @ {} Physical Core", cpu, count))
         }
     }
-
-    (cpu_name, arch, virt.as_str().to_string())
+    
+    if virt == Virtualization::Unknown {
+        (cpu_name, arch, "Physical".to_string())
+    } else {
+        (cpu_name, arch, virt.as_str().to_string())
+    }
 }
 
 pub fn get_boot_time() -> u64 {
