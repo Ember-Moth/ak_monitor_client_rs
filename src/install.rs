@@ -349,7 +349,7 @@ pub fn install_to_openrc(args: Args) {
 
 command=/usr/bin/ak_monitor_client_rs
 command_args="COMMAND_ARGS_HERE"
-pidfile=/run/$SERVICE_NAME.pid
+pidfile=/run/akile_monitor_client_rs.pid
 description="Akile Monitor Slave Client (Rust) Service"
 
 depend() {
@@ -358,15 +358,15 @@ depend() {
 }
 
 start() {
-    ebegin "Starting $SERVICE_NAME"
-    start-stop-daemon --start --background --make-pidfile --pidfile \$pidfile --exec \$command -- \$command_args
-    eend \$?
+    ebegin "Starting Akile Monitor Slave Client (Rust) Service"
+    start-stop-daemon --start --background --make-pidfile --pidfile $pidfile --exec $command -- $command_args
+    eend $?
 }
 
 stop() {
-    ebegin "Stopping $SERVICE_NAME"
-    start-stop-daemon --stop --pidfile \$pidfile
-    eend \$?
+    ebegin "Stopping Akile Monitor Slave Client (Rust) Service"
+    start-stop-daemon --stop --pidfile $pidfile
+    eend $?
 }
 
 restart() {
