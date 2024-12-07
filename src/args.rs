@@ -29,13 +29,17 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     pub debug: bool,
 
-    /// 开启 TLS 支持 
+    /// 开启 TLS 支持
     #[arg(long, default_value_t = false)]
     pub tls: bool,
-    
-    /// Monitor 路径 
+
+    /// Monitor 路径
     #[arg(long, default_value_t = String::from("monitor"))]
     pub monitor_path: String,
+
+    /// Install 模式
+    #[arg(long, default_value_t = false)]
+    pub install: bool,
 }
 impl Args {
     pub fn init_args() -> Args {

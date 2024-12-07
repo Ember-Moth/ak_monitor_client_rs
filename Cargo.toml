@@ -2,6 +2,12 @@
 name = "ak_monitor_client_rs"
 version = "0.0.2"
 edition = "2021"
+authors = ["GenshinMinecrat <gm@highp.ing>"]
+description = "Akile Monitor Client By Rust"
+readme = "README.md"
+repository = "https://github.com/GenshinMinecraft/ak_monitor_client_rs"
+license = "WTFPL"
+
 
 [dependencies]
 tokio = { version = "1.42.0", default-features = false, features = ["rt-multi-thread", "macros", "time"] }

@@ -1,11 +1,14 @@
 mod args;
 mod build_message;
 mod get_info;
+mod install;
 mod model;
 
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, info};
-use tokio_tungstenite::{connect_async, connect_async_tls_with_config, tungstenite::protocol::Message};
+use tokio_tungstenite::{
+    connect_async, connect_async_tls_with_config, tungstenite::protocol::Message,
+};
 
 use crate::args::Args;
 use crate::build_message::{build_host, build_host_state, build_post_gziped_json};
@@ -23,17 +26,22 @@ async fn main() {
         info!("服务正在启动")
     }
 
+    if args.install {
+        info!("检测到 --install 参数，正在进入安装模式");
+        install::install_to_systemd(args.clone());
+    }
+
     loop {
         let (ws_stream, _) = if !args.tls {
             let url_str = format!("ws://{}/{}", args.server, args.monitor_path);
             info!("自动构建 WebSocket URL 为: {}", url_str);
             match connect_async(url_str.clone()).await {
-            Ok(s) => s,
-            Err(e) => {
-                log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
-                tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-                continue;
-            }
+                Ok(s) => s,
+                Err(e) => {
+                    log::error!("WebSocket 连接失败，5 秒后重试: {}", e);
+                    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                    continue;
+                }
             }
         } else {
             let url_str = format!("wss://{}/{}", args.server, args.monitor_path);

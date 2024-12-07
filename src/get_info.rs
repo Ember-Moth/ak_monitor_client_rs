@@ -50,7 +50,7 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
             cpu_name.push(format!("{} @ {} Physical Core", cpu, count))
         }
     }
-    
+
     if virt == Virtualization::Unknown {
         (cpu_name, arch, "Physical".to_string())
     } else {

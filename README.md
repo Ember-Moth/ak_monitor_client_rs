@@ -42,6 +42,7 @@ Options:
 - `--debug`： (非必须) Debug 日志输出
 - `--tls`： (非必须) 开启 TLS 支持
 - `--monitor-path`: (非必须) 自定义 Monitor 路径，即为 `ws://ip:port/monitor` 中的 `monitor`
+- `--install`: (非必须) 安装服务，详情请见下文`保活`部分
 - `--help`： 查看帮助
 
 ### Examples
@@ -73,6 +74,11 @@ Options:
 ./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -n GenArch -f 2 -i 2400
 ```
 
+- 安装并连接，并设置上报间隔时间为 `2400ms`，设置设置虚假倍率为 `2`，设置主机名为 `GenArch`:
+```bash
+./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -n GenArch -f 2 -i 2400 --install
+```
+
 ## 与原版相比之优势
 
 - Binary 可执行文件大小:
@@ -97,29 +103,13 @@ Options:
 
 ## 保活
 
-目前，大部分 Linux 发行版均已经使用 SystemD 作为 Pid 1，所以本文只使用 SystemD
+**PS: 该功能仅仅在 `Linux` 下且使用 `SystemD` 的发行版下可用**
 
-用你喜欢的编辑器打开 `/etc/systemd/system/akile_monitor_client.service`
+需要保活？ 来让 Install 功能帮你！
 
-填入: 
-```
-Description=Cloudflare Speedtest Slave
-After=network.target
+你只需要在启动命令的基础上加上 `--install` 参数，就会进入 Install 模式并**自动根据参数生成服务文件**
 
-[Install]
-WantedBy=multi-user.target
-
-[Service]
-Type=simple
-ExecStart=/path/to/ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft 
-Restart=always
-```
-
-随后重载并开启本服务即可:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now akile_monitor_client
-```
+![360335e73aa8c82806089336754039bb.png](https://ice.frostsky.com/2024/12/07/360335e73aa8c82806089336754039bb.png)
 
 这样便完成了安装保活
 
