@@ -39,20 +39,31 @@ Options:
 - `--tls`： (非必须，未支持) 开启 TLS 支持
 - `--help`： 查看帮助
 
-最简单的使用方法: (下列例子均以 `GenshinMinecraft` 为 Auth Secret 连接至 `192.168.111.1:3090` 为例)
-- 连接:
+下列例子均以 `GenshinMinecraft` 为 Auth Secret 连接至 `192.168.111.1:3090` 为例
+
+- 连接，并自动获取主机名:
 ```bash
 ./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft
 ```
 
-- 连接并设置主机名为 `GenArch`:
+- 连接，并设置主机名为 `GenArch`:
 ```bash
 ./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -n GenArch
 ```
 
-- 连接并设置设置虚假倍率为 `2`:
+- 连接，并设置设置虚假倍率为 `2`:
 ```bash
 ./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -f 2
+```
+
+- 连接，并设置上报间隔时间为 `2400ms`: 
+```bash
+./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -i 2400
+```
+
+- 连接，并设置上报间隔时间为 `2400ms`，设置设置虚假倍率为 `2`，设置主机名为 `GenArch`:
+```bash
+./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft -n GenArch -f 2 -i 2400
 ```
 
 ## 与原版相比之优势
@@ -76,6 +87,34 @@ Options:
   官方版本需要手动修改 `client.json` 文件，不便于配置，Rust 版本直接通过命令行读取参数，更加便捷
 - 更多功能
   在原版的基础上，增加了 `虚假倍率`、`自定义间隔时间` 等功能
+
+## 保活
+
+目前，大部分 Linux 发行版均已经使用 SystemD 作为 Pid 1，所以本文只使用 SystemD
+
+用你喜欢的编辑器打开 `/etc/systemd/system/akile_monitor_client.service`
+
+填入: 
+```
+Description=Cloudflare Speedtest Slave
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/path/to/ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft 
+Restart=always
+```
+
+随后重载并开启本服务即可:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now akile_monitor_client
+```
+
+这样便完成了安装保活
 
 ## 鸣谢
 - [Akile Monitor](https://github.com/akile-network/akile_monitor)
