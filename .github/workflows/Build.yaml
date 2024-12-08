@@ -115,7 +115,7 @@ jobs:
           toolchain: "nightly"
         env:
           RUSTFLAGS: "-Zlocation-detail=none"
-          CROSS_CONFIG: "/home/runner/work/ak_monitor_client_rs/ak_monitor_client_rs"
+          CROSS_CONFIG: "/home/runner/work/ak_monitor_client_rs/ak_monitor_client_rs/Cross.toml"
       - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
