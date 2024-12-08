@@ -31,3 +31,50 @@ strip = true
 codegen-units = 1
 opt-level = "z"
 panic = "abort"
+
+[workspace.metadata.cross.target.x86_64-unknown-linux-musl]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.x86_64-unknown-linux-gnu]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.arm-unknown-linux-gnueabi]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.arm-unknown-linux-gnueabihf]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.aarch64-unknown-linux-gnu]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.aarch64-unknown-linux-musl]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.i686-unknown-linux-gnu]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.i686-unknown-linux-musl]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.arm-unknown-linux-musleabi]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.arm-unknown-linux-musleabihf]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.armv5te-unknown-linux-gnueabi]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.armv5te-unknown-linux-musleabi]
+
+[workspace.metadata.cross.target.armv7-unknown-linux-musleabi]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.armv7-unknown-linux-musleabihf]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.armv7-unknown-linux-gnueabihf]
+pre-build = ["rustup component add rust-src --toolchain nightly"]
+
+[workspace.metadata.cross.target.armv7-unknown-linux-gnueabi]
+pre-build = ["rustup component add rust-src --toolchain nightly"]

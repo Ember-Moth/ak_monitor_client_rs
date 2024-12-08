@@ -56,11 +56,6 @@ jobs:
             target: arm-unknown-linux-gnueabi
             bin: ak_monitor_client_rs
             command: build
-          - release_for: linux_arm_gnueabihf
-            os: ubuntu-latest
-            target: arm-unknown-linux-gnueabihf
-            bin: ak_monitor_client_rs
-            command: build
           - release_for: linux_arm_musleabi
             os: ubuntu-latest
             target: arm-unknown-linux-musleabi
@@ -114,12 +109,12 @@ jobs:
         with:
           command: ${{ matrix.platform.command }}
           target: ${{ matrix.platform.target }}
-#          args: "-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --locked --release"
-          args: "--locked --release"
+          args: "-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --locked --release"
+#          args: "--locked --release"
           strip: true
-#          toolchain: "nightly"
-#        env:
-#          RUSTFLAGS: "-Zlocation-detail=none"
+          toolchain: "nightly"
+        env:
+          RUSTFLAGS: "-Zlocation-detail=none"
       - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
@@ -127,7 +122,7 @@ jobs:
       - name: UPX version
         run: upx --version
       - name: Compress binary
-        run: upx -v --ultra-brute target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+        run: upx -v --ultra-brute -o target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-upxed target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
       - name: Upload binary
         uses: actions/upload-artifact@v3
         with:
@@ -136,12 +131,14 @@ jobs:
       - name: Rename binary
         run:
           cp target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }} target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}
+          cp target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-upxed target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}-upxed
       - name: Publish to GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
           files: |
             target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}
+            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}-${{ matrix.platform.release_for }}-upxed
           tag_name: latest  # 使用固定的标签名称作为发布版本号
           body: |
             Latest release for Commit: ${{ github.sha }}
