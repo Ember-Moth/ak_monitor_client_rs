@@ -96,11 +96,11 @@ Options:
 
 ### 空间占用
 
-![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image.png)
+![f9a352a41fb743794b644cda162caa85.png](https://ice.frostsky.com/2024/12/08/f9a352a41fb743794b644cda162caa85.png)
 
 上为原版，下为重写的 Rust 版本
 
-可见 Binary 的占用两者相差约 **15** 倍 ~~(其实我也不太知道原版作为一个监控端是怎么编译出来 24M 的)~~
+可见 Binary 的占用两者相差约 **39** 倍 ~~(其实我也不太知道原版作为一个监控端是怎么编译出来 24M 的)~~
 
 ### 内存占用
 
@@ -108,11 +108,11 @@ Options:
   ![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image-1.png)
 
 - 重写的 Rust 版本
-  ![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image-2.png)
+  ![2d8937c15aad5b6be95d53cd67a437b2.png](https://ice.frostsky.com/2024/12/08/2d8937c15aad5b6be95d53cd67a437b2.png)
 
-可见，原版占用约为 `18MiB`，重写的 Rust 版本占用约为 `4MiB`
+可见，原版占用约为 `18MiB`，重写的 Rust 版本占用约为 `3.5MiB`
 
-两者相差约 4.5 倍，虽然这点内存对于一个正常的小鸡来说无伤大雅，但能少一点就少一点
+两者相差约 5 倍，虽然这点内存对于一个正常的小鸡来说无伤大雅，但能少一点就少一点
 
 PS: Arm64 架构内存更少，约 `1.76MiB`，
 
