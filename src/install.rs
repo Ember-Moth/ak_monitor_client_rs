@@ -284,12 +284,12 @@ pub fn uninstall_from_systemd() {
             warn!("无法运行 systemctl daemon-reload: {}", e);
         }
     }
-    match fs::remove_file("/usr/bin/akile_monitor_client_rs") {
+    match fs::remove_file("/usr/bin/ak_monitor_client_rs") {
         Ok(_) => {
-            info!("成功删除 /usr/bin/akile_monitor_client_rs");
+            info!("成功删除 /usr/bin/ak_monitor_client_rs");
         }
         Err(e) => {
-            warn!("无法删除 /usr/bin/akile_monitor_client_rs: {}", e);
+            warn!("无法删除 /usr/bin/ak_monitor_client_rs: {}", e);
         }
     }
     info!("成功卸载 Akile Monitor Client Service");
@@ -543,12 +543,12 @@ pub fn uninstall_from_openrc() {
         }
     }
 
-    match fs::remove_file("/usr/bin/akile_monitor_client_rs") {
+    match fs::remove_file("/usr/bin/ak_monitor_client_rs") {
         Ok(_) => {
-            info!("成功删除 /usr/bin/akile_monitor_client_rs");
+            info!("成功删除 /usr/bin/ak_monitor_client_rs");
         }
         Err(e) => {
-            warn!("无法删除 /usr/bin/akile_monitor_client_rs: {}", e);
+            warn!("无法删除 /usr/bin/ak_monitor_client_rs: {}", e);
         }
     }
     info!("成功卸载 Akile Monitor Client Service");
