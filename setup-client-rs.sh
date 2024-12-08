@@ -132,7 +132,7 @@ if [ $# != 0 ]; then
 	exit 0
 fi
 
-wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE"
+wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE-upxed"
 chmod 777 /usr/bin/ak_monitor_client_rs
 
 get_input() {
