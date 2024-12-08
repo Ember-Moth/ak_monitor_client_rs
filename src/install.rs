@@ -105,7 +105,7 @@ Restart=always
 "#;
     let debug_ = if args.debug { "--debug" } else { "" };
 
-    let tls = if args.tls { "--tls" } else { "" };
+    let tls = if args.tls { "--tls true" } else { "--tls false" };
 
     let command = format!(
         "/usr/bin/ak_monitor_client_rs {} {} -n \"{}\" -s \"{}\" -a \"{}\" -i {} -f {} --monitor-path \"{}\"",
@@ -376,7 +376,7 @@ restart() {
 "#;
     let debug_ = if args.debug { "--debug" } else { "" };
 
-    let tls = if args.tls { "--tls" } else { "" };
+    let tls = if args.tls { "--tls true" } else { "--tls false" };
 
     let command = format!(
         "{} {} -n \"{}\" -s \"{}\" -a \"{}\" -i {} -f {} --monitor-path \"{}\"",
