@@ -2,9 +2,10 @@ mod args;
 mod build_message;
 mod get_info;
 mod install;
+mod manage_utils;
 mod model;
 
-use futures_util::future::err;
+//use futures_util::future::err;
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, error, info};
 use std::process::exit;
@@ -15,7 +16,7 @@ use tokio_tungstenite::{
 use crate::args::*;
 use crate::build_message::{build_host, build_host_state, build_post_gziped_json};
 use sysinfo::System;
-use crate::install::{check_pid1, PID1};
+use crate::manage_utils::{check_pid1, PID1};
 
 #[tokio::main]
 async fn main() {
@@ -28,6 +29,8 @@ async fn main() {
     } else if args.install {
         simple_logger::init_with_level(log::Level::Debug).unwrap();
         info!("检测到 --install 参数, 正在进入安装模式");
+        manage_utils::check_system();
+        manage_utils::check_root();
         match check_pid1() {
             PID1::Systemd => {
                 info!("检测到 SystemD");
@@ -42,6 +45,8 @@ async fn main() {
     } else if args.uninstall {
         simple_logger::init_with_level(log::Level::Debug).unwrap();
         info!("检测到 --uninstall 参数, 正在进入卸载模式");
+        manage_utils::check_system();
+        manage_utils::check_root();
         match check_pid1() {
             PID1::Systemd => {
                 info!("检测到 SystemD");
