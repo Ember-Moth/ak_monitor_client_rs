@@ -114,8 +114,11 @@ jobs:
         with:
           command: ${{ matrix.platform.command }}
           target: ${{ matrix.platform.target }}
-          args: "--locked --release"
+          args: "-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --locked --release"
           strip: true
+          toolchain: "nightly"
+        env:
+          RUSTFLAGS: "-Zlocation-detail=none"
       - name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
