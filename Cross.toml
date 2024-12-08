@@ -1,0 +1,5 @@
+[build]
+build-std = true                              # do not build the std library. has precedence over xargo
+xargo = true                                   # enable the use of xargo by default
+zig = true                                    # do not use zig cc for the builds
+pre-build = ["rustup component add rust-src --toolchain nightly"]
