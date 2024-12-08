@@ -374,6 +374,6 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/ak_monitor_client_rs COMMAND_ARGS"
+ExecStart=/usr/bin/ak_monitor_client_rs COMMAND_ARGS
 Restart=always
 "#;
