@@ -47,7 +47,7 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
         }
     } else {
         for (cpu, count) in cpu_counts {
-            cpu_name.push(format!("{} @ {} Physical Core", cpu, count))
+            cpu_name.push(format!("{} @ {} Core", cpu, count))
         }
     }
 
