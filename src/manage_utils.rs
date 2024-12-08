@@ -1,3 +1,4 @@
+// For Install / Uninstall
 use crate::args::Args;
 use log::{error, info, warn};
 use std::fs::File;
@@ -70,7 +71,7 @@ pub fn check_installed(service_path: &str) {
 }
 
 pub fn generate_client_args(args: Args) -> String {
-    return format!(
+    format!(
         "--debug {} --tls {} -n \"{}\" -s \"{}\" -a \"{}\" -i {} -f {} --monitor-path \"{}\"",
         args.debug,
         args.tls,
@@ -80,7 +81,7 @@ pub fn generate_client_args(args: Args) -> String {
         args.interval,
         args.fake_times,
         args.monitor_path
-    );
+    )
 }
 
 pub fn copy_binary() {

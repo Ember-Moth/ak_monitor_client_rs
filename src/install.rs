@@ -277,25 +277,7 @@ pub fn install_to_openrc(args: Args) {
         }
     }
 
-    match Command::new("rc-service")
-        .arg("akile_monitor_client_rs")
-        .arg("start")
-        .output()
-    {
-        Ok(tmp) => {
-            if tmp.status.success() {
-                info!("服务安装完成, 成功启动服务");
-                exit(0);
-            } else {
-                error!("无法启动服务");
-                exit(1);
-            }
-        }
-        Err(e) => {
-            error!("无法启动服务: {}", e);
-            exit(1);
-        }
-    }
+    warn!("请手动执行 `rc-service akile_monitor_client_rs start`!")
 }
 
 pub fn uninstall_from_openrc() {
@@ -353,7 +335,7 @@ pub fn uninstall_from_openrc() {
     exit(1);
 }
 
-static SERVICE_TEMPLATE_OPENRC: &str = r#"#!/sbin/openrc-run
+const SERVICE_TEMPLATE_OPENRC: &str = r#"#!/sbin/openrc-run
 
 command=/usr/bin/ak_monitor_client_rs
 command_args="COMMAND_ARGS"
