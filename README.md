@@ -88,28 +88,64 @@ Options:
 ```bash
 ./ak_monitor_client_rs --uninstall
 ```
+## 与原版比较
 
-## 与原版相比之优势
+既然是重写，那就必须有比原版好的地方
 
-- Binary 可执行文件大小:
-  
-  ![2e1ed8d14b7924297aa65cb62013453c.png](https://ice.frostsky.com/2024/12/05/2e1ed8d14b7924297aa65cb62013453c.png)
-  
-  上为原版, 下为 Rust 版本, 两者相差约 15 倍 (均为 Linux amd64)
+测试环境均为 `Redmi Book Pro 15 锐龙版 + Arch Linux`
 
-- 性能表现
-  原版:
-  ![7fec014e900e612a8a90b1efe4c6cd84.png](https://ice.frostsky.com/2024/12/05/7fec014e900e612a8a90b1efe4c6cd84.png)
+### 空间占用
 
-  Rust 版本:
-  ![6b0a65cbc6659ac1d4eff212ce29e2a6.png](https://ice.frostsky.com/2024/12/05/6b0a65cbc6659ac1d4eff212ce29e2a6.png)
-  
-  可见, 原版占用内存约为 `18M`, 而 Rust 版本占用内存约为 `4M`, 相差约 4.5 倍  (Arch Linux Amd64 下测试)
+![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image.png)
 
-- 便于配置
-  官方版本需要手动修改 `client.json` 文件, 不便于配置, Rust 版本直接通过命令行读取参数, 更加便捷
-- 更多功能
-  在原版的基础上, 增加了 `虚假倍率`、`自定义间隔时间` 等功能
+上为原版，下为重写的 Rust 版本
+
+可见 Binary 的占用两者相差约 **15** 倍 ~~(其实我也不太知道原版作为一个监控端是怎么编译出来 24M 的)~~
+
+### 内存占用
+
+- 原版
+  ![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image-1.png)
+
+- 重写的 Rust 版本
+  ![alt text](https://blog.c1oudf1are.eu.org/p/akile-monitor-client-rs/image-2.png)
+
+可见，原版占用约为 `18MiB`，重写的 Rust 版本占用约为 `4MiB`
+
+两者相差约 4.5 倍，虽然这点内存对于一个正常的小鸡来说无伤大雅，但能少一点就少一点
+
+PS: Arm64 架构内存更少，约 `1.76MiB`，
+
+### 便于配置
+
+原版的配置十分麻烦 (即使有一键脚本)，需要手动配置 `client.json` 来指定连接的主端
+
+而使用重写的 Rust 版本，则只需要在命令行上设置即可，Demo:
+
+```bash
+./ak_monitor_client_rs -s 192.168.111.1:3090 -a GenshinMinecraft
+```
+
+### 功能更多
+
+- 美观输出:
+  原版仅有最普通的控制台输出，而 Rust 版本则使用了丰富的 `log` 库来优化输出 ~~(虽然也没多少人看)~~
+- 虚假倍率:
+  你是否想让你的小鸡拥有顶天立地的算力？虚假倍率来助你:
+
+  - 总物理内存
+  - 总 Swap 内存
+  - 已用物理内存
+  - 已用 Swap 内存
+  - 网络进出总量
+  - 网络进出速度
+  - Load 1 / 5 / 15
+
+  以上的这些都可以随心所欲地自定义倍率，拳打太湖之光，脚踢前沿
+- 自定义间隔时间: 这个功能我觉得是没啥用的，但是还是加上了。也就是自定义数据上报的间隔
+- 自动获取主机名: 懒得填写主机名？这功能能帮你自动获取主机的 Hostname
+- 自动重连: 原版只要连不上主端，就会直接退出，Rust 版即使断连也会在五秒之后自动尝试重连
+
 
 ## 保活
 
