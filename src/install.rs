@@ -468,7 +468,8 @@ restart() {
         }
     }
 
-    match Command::new("/etc/init.d/akile_monitor_client_rs")
+    match Command::new("rc-service")
+        .arg("akile_monitor_client_rs")
         .arg("start")
         .output()
     {
@@ -498,7 +499,8 @@ pub fn uninstall_from_openrc() {
         exit(1);
     }
 
-    match Command::new("/etc/init.d/akile_monitor_client_rs")
+    match Command::new("rc-service")
+        .arg("akile_monitor_client_rs")
         .arg("stop")
         .output()
     {
