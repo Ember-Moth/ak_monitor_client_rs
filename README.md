@@ -4,6 +4,21 @@
 
 该项目并非官方项目, 出现的任何问题本人概不负责
 
+## 一键脚本
+
+- 交互模式
+  ```bash
+  wget -O setup-monitor.sh "https://ghp.ci/https://raw.githubusercontent.com/GenshinMinecraft/ak_monitor_client_rs/refs/heads/main/setup-client-rs.sh" && chmod +x setup-client-rs.sh && sudo bash ./setup-client-rs.sh
+  ```
+- 直接传入参数
+  ```bash
+  wget -O setup-monitor.sh "https://ghp.ci/https://raw.githubusercontent.com/GenshinMinecraft/ak_monitor_client_rs/refs/heads/main/setup-client-rs.sh" && chmod +x setup-client-rs.sh
+  # 四个参数依次为 主端地址 AuthSecret 主机名 是否开启 TLS
+  # 其中，前两者是必须的，后两者可选，TLS 用 0 / 1 表示
+  bash ./setup-client-rs.sh "192.168.111.3090" "GenshinMinecraft"
+  bash ./setup-client-rs.sh "192.168.111.3090" "GenshinMinecraft" "GenArch" 1
+  ```
+
 ## 下载
 
 请前往本项目的 [Release](https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/tag/latest) 处下载
