@@ -106,7 +106,7 @@ jobs:
         run: sudo apt update && sudo apt install -y musl-tools musl-dev musl upx
       - name: Install toolchain
         run:
-          rustup toolchain install nightly-${{ matrix.platform.target }}
+          rustup toolchain install nightly
       - name: Install rust-src
         run:
           rustup component add rust-src --toolchain nightly-${{ matrix.platform.target }}
