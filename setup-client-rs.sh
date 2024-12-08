@@ -115,16 +115,16 @@ if [ $# != 0 ]; then
 	# 检查 tls 是否为 0 或 1 并且 name 是否为空或非空
 	if [[ "$tls" == "0" || -z "$tls"  && -n "$name" ]]; then
 		# 当 tls 是 0 且 name 不为空时执行的命令
-		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -n "$name" --install
+		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -n "$name" --install
 	elif [[ "$tls" == "1" && -n "$name" ]]; then
 		# 当 tls 是 1 且 name 不为空时执行的命令
-		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -n "$name" --tls true --install
+		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -n "$name" --tls true --install
 	elif [[ "$tls" == "0" || -z "$tls" && -z "$name" ]]; then
 		# 当 tls 是 0 且 name 为空时执行的命令
-		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" --install
+		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" --install
 	elif [[ "$tls" == "1" && -z "$name" ]]; then
 		# 当 tls 是 1 且 name 为空时执行的命令
-		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" --tls true --install
+		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" --tls true --install
 	else
 		echo "TLS 参数必须是 0 / 1 "
 		exit 1;
@@ -179,16 +179,16 @@ echo "$monitor_path"
 # 检查 tls 是否为 0 或 1 并且 name 是否为 "default_name" 或其他值
 if [[ "$tls" == "0" && "$name" != "default_name" ]]; then
     # 当 tls 是 0 且 name 不是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --install
+    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --install
 elif [[ "$tls" == "1" && "$name" != "default_name" ]]; then
     # 当 tls 是 1 且 name 不是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --tls true --install
+    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --tls true --install
 elif [[ "$tls" == "0" && "$name" == "default_name" ]]; then
     # 当 tls 是 0 且 name 是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --install
+    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --install
 elif [[ "$tls" == "1" && "$name" == "default_name" ]]; then
     # 当 tls 是 1 且 name 是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_secret" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --tls true --install
+    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --tls true --install
     # 在这里放置你需要执行的具体命令
 else
     # 如果 tls 不是 0 或 1，则给出提示信息
