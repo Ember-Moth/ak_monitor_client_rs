@@ -114,13 +114,5 @@ pub async fn get_uptime_info() -> Result<(u64, f64, f64, f64), Box<dyn std::erro
 }
 
 pub fn get_hostname() -> String {
-    match whoami::hostname() {
-        Ok(hostname) => {
-            if hostname == "localhost".to_string() {
-                panic!("无法获取主机名")
-            }
-            hostname
-        }
-        Err(_) => panic!("无法获取主机名"),
-    }
+    whoami::hostname().unwrap_or_else(|_| "UnknownHostname".to_string())
 }
