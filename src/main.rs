@@ -15,8 +15,8 @@ use tokio_tungstenite::{
 
 use crate::args::*;
 use crate::build_message::{build_host, build_host_state, build_post_gziped_json};
-use sysinfo::System;
 use crate::manage_utils::{check_pid1, PID1};
+use sysinfo::System;
 
 #[tokio::main]
 async fn main() {
@@ -41,7 +41,6 @@ async fn main() {
                 install::install_to_openrc(args.clone().to_args());
             }
         }
-
     } else if args.uninstall {
         simple_logger::init_with_level(log::Level::Debug).unwrap();
         info!("检测到 --uninstall 参数, 正在进入卸载模式");

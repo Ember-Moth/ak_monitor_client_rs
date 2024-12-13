@@ -1,6 +1,6 @@
-use std::process::exit;
 use crate::get_info::get_hostname;
 use clap::Parser;
+use std::process::exit;
 
 /// Akile Monitor Rust Client
 #[derive(Parser, Debug, Clone)]
@@ -59,14 +59,14 @@ impl Args_cli {
             None => {
                 eprintln!("请输入 --server 参数");
                 exit(1);
-            },
+            }
         };
         let auth_secret = match self.auth_secret {
             Some(s) => s,
             None => {
                 eprintln!("请输入 --auth_secret 参数");
                 exit(1);
-            },
+            }
         };
         let interval = self.interval.unwrap_or(1000);
         let fake_times = self.fake_times.unwrap_or(1);

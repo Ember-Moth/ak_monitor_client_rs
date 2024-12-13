@@ -1,5 +1,5 @@
-use crate::manage_utils;
 use crate::args::Args;
+use crate::manage_utils;
 use log::{error, info, warn};
 use std::fs::File;
 use std::io::Write;
@@ -7,7 +7,6 @@ use std::process::{exit, Command};
 use std::{fs, io};
 
 pub fn install_to_systemd(args: Args) {
-
     manage_utils::check_installed("/etc/systemd/system/akile_monitor_client.service");
     manage_utils::copy_binary();
 
@@ -223,10 +222,7 @@ pub fn install_to_openrc(args: Args) {
         }
     }
 
-    match Command::new("rc-update")
-        .arg("-u")
-        .output()
-    {
+    match Command::new("rc-update").arg("-u").output() {
         Ok(tmp) => {
             if tmp.status.success() {
                 info!("成功重载 OpenRC 服务");
@@ -235,10 +231,7 @@ pub fn install_to_openrc(args: Args) {
             }
         }
         Err(e) => {
-            warn!(
-                "无法重载 OpenRC 服务: {}",
-                e
-            );
+            warn!("无法重载 OpenRC 服务: {}", e);
         }
     }
 

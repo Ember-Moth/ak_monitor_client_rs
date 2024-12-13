@@ -112,16 +112,13 @@ pub fn copy_binary() {
     }
 }
 
-pub fn delete_binary () {
+pub fn delete_binary() {
     match fs::remove_file("/usr/bin/ak_monitor_client_rs") {
         Ok(_) => {
             info!("成功删除 /usr/bin/ak_monitor_client_rs");
         }
         Err(e) => {
-            warn!(
-                "无法删除 /usr/bin/ak_monitor_client_rs: {}",
-                e
-            );
+            warn!("无法删除 /usr/bin/ak_monitor_client_rs: {}", e);
         }
     }
 }
