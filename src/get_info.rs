@@ -1,4 +1,3 @@
-use heim_virt::*;
 use std::collections::HashMap;
 use sysinfo::*;
 use systemstat::Platform;
@@ -38,23 +37,41 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
     }
 
     let arch = whoami::arch().to_string();
-    let virt = detect().await.unwrap_or(Virtualization::Unknown);
 
-    let mut cpu_name: Vec<String> = Vec::new();
-    if virt.is_vm() || virt.is_container() {
-        for (cpu, count) in cpu_counts {
-            cpu_name.push(format!("{} @ {} Virtual Core", cpu, count))
-        }
-    } else {
+    #[cfg(target_os = "linux")]
+    {
+        let get_arch_linux = async || -> (Vec<String>, String, String) {
+            let virt = heim_virt::detect().await.unwrap_or(heim_virt::Virtualization::Unknown);
+
+            let mut cpu_name: Vec<String> = Vec::new();
+            if virt.is_vm() || virt.is_container() {
+                for (cpu, count) in cpu_counts {
+                    cpu_name.push(format!("{} @ {} Virtual Core", cpu, count))
+                }
+            } else {
+                for (cpu, count) in cpu_counts {
+                    cpu_name.push(format!("{} @ {} Core", cpu, count))
+                }
+            }
+
+            if virt == heim_virt::Virtualization::Unknown {
+                (cpu_name, arch, "Physical".to_string())
+            } else {
+                (cpu_name, arch, virt.as_str().to_string())
+            }
+        };
+
+        get_arch_linux().await
+    }
+
+    #[cfg(target_os = "freebsd")]
+    {
+        let virt = String::from("Unknown - FreeBSD");
+        let mut cpu_name: Vec<String> = Vec::new();
         for (cpu, count) in cpu_counts {
             cpu_name.push(format!("{} @ {} Core", cpu, count))
         }
-    }
-
-    if virt == Virtualization::Unknown {
-        (cpu_name, arch, "Physical".to_string())
-    } else {
-        (cpu_name, arch, virt.as_str().to_string())
+        (cpu_name, arch, virt)
     }
 }
 

@@ -19,11 +19,13 @@ serde_json = { version = "1.0.133", default-features = false, features = ["std"]
 flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] }
 sysinfo = { version = "0.33.0", default-features = false, features = ["system"] }
 whoami = "2.0.0-pre.0"
-heim-virt = "0.1.0-alpha.1"
 systemstat = "0.2.3"
 clap = { version = "4.5.22", default-features = false, features = ["help", "derive", "color", "std"] }
 log = { version = "0.4.22", default-features = false, features = ["std"] }
 simple_logger = "5.0.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+heim-virt = "0.1.0-alpha.1"
 
 [profile.release]
 lto = true
