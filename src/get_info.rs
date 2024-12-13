@@ -64,14 +64,15 @@ pub async fn get_cpu_info() -> (Vec<String>, String, String) {
         }
     }
 
-    #[cfg(target_os = "freebsd")]
-    {
-        let mut cpu_name: Vec<String> = Vec::new();
-        for (cpu, count) in cpu_counts {
-            cpu_name.push(format!("{} @ {} Virtual Core", cpu, count))
-        }
-        (cpu_name, arch, "Unknown".to_string())
-    }
+    // 废弃代码
+    // #[cfg(target_os = "freebsd")]
+    // {
+    //     let mut cpu_name: Vec<String> = Vec::new();
+    //     for (cpu, count) in cpu_counts {
+    //         cpu_name.push(format!("{} @ {} Virtual Core", cpu, count))
+    //     }
+    //     (cpu_name, arch, "Unknown".to_string())
+    // }
 
 
 }
