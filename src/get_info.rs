@@ -5,15 +5,15 @@ use systemstat::Platform;
 pub async fn get_mem_info(mut sys: System) -> (u64, u64, u64, u64, u64, u64) {
     sys.refresh_memory();
     let total_mem = sys.total_memory();
-    let free_mem = sys.free_memory();
-    let used_mem = total_mem - free_mem;
+    let available_mem = sys.available_memory();
+    let used_mem = total_mem - available_mem;
 
     let total_swap = sys.total_swap();
     let free_swap = sys.free_swap();
     let used_swap = total_swap - free_swap;
 
     (
-        total_mem, free_mem, used_mem, total_swap, free_swap, used_swap,
+        total_mem, available_mem, used_mem, total_swap, free_swap, used_swap,
     )
 }
 
