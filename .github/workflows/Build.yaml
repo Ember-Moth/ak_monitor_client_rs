@@ -96,11 +96,6 @@ jobs:
             target: armv7-unknown-linux-musleabihf
             bin: ak_monitor_client_rs
             command: build
-          - release_for: freebsd_x86_64
-            os: ubuntu-latest
-            target: x86_64-unknown-freebsd
-            bin: ak_monitor_client_rs
-            command: build
 
 
     runs-on: ${{ matrix.platform.os }}
