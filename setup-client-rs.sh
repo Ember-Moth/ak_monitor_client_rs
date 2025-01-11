@@ -78,7 +78,7 @@ if [ $# != 0 ]; then
 	echo "快速安装模式"
 	# 初始化变量为空值
 	server=""
-	auth_secret=""
+	auth_token=""
 	name=""
 	tls=""
 
@@ -93,7 +93,7 @@ if [ $# != 0 ]; then
 
 			case $index in
 			1) server=$param ;;
-			2) auth_secret=$param ;;
+			2) auth_token=$param ;;
 			3) name=$param ;;
 			4) tls=$param ;;
 			*) break ;;
@@ -113,7 +113,7 @@ if [ $# != 0 ]; then
 	wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE"
 	chmod 777 /usr/bin/ak_monitor_client_rs
 	# 检查 tls 是否为 0 或 1 并且 name 是否为空或非空
-	if [[ "$tls" == "0" || -z "$tls"  && -n "$name" ]]; then
+	if [[ "$tls" == "0" || -z "$tls" && -n "$name" ]]; then
 		# 当 tls 是 0 且 name 不为空时执行的命令
 		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -n "$name" --install
 	elif [[ "$tls" == "1" && -n "$name" ]]; then
@@ -127,7 +127,7 @@ if [ $# != 0 ]; then
 		/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" --tls true --install
 	else
 		echo "TLS 参数必须是 0 / 1 "
-		exit 1;
+		exit 1
 	fi
 	exit 0
 fi
@@ -136,22 +136,22 @@ wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/Genshin
 chmod 777 /usr/bin/ak_monitor_client_rs
 
 get_input() {
-    local prompt=$1
-    local default_value=$2
-    local var_name=$3
+	local prompt=$1
+	local default_value=$2
+	local var_name=$3
 
-    read -p "$prompt" input
-    if [[ -z "$input" ]]; then
-        # 如果用户没有输入，默认值为空则提示重新输入
-        if [[ -z "$default_value" ]]; then
-            echo "此选项是必填的，请输入有效值。"
-            get_input "$prompt" "$default_value" "$var_name"
-        else
-            declare -g $var_name="$default_value"
-        fi
-    else
-        declare -g $var_name="$input"
-    fi
+	read -p "$prompt" input
+	if [[ -z "$input" ]]; then
+		# 如果用户没有输入，默认值为空则提示重新输入
+		if [[ -z "$default_value" ]]; then
+			echo "此选项是必填的，请输入有效值。"
+			get_input "$prompt" "$default_value" "$var_name"
+		else
+			declare -g $var_name="$default_value"
+		fi
+	else
+		declare -g $var_name="$input"
+	fi
 }
 
 # 必填项
@@ -178,20 +178,20 @@ echo "$monitor_path"
 
 # 检查 tls 是否为 0 或 1 并且 name 是否为 "default_name" 或其他值
 if [[ "$tls" == "0" && "$name" != "default_name" ]]; then
-    # 当 tls 是 0 且 name 不是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --install
+	# 当 tls 是 0 且 name 不是 "default_name" 时执行的命令
+	/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --install
 elif [[ "$tls" == "1" && "$name" != "default_name" ]]; then
-    # 当 tls 是 1 且 name 不是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --tls true --install
+	# 当 tls 是 1 且 name 不是 "default_name" 时执行的命令
+	/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" -n "$name" --tls true --install
 elif [[ "$tls" == "0" && "$name" == "default_name" ]]; then
-    # 当 tls 是 0 且 name 是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --install
+	# 当 tls 是 0 且 name 是 "default_name" 时执行的命令
+	/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --install
 elif [[ "$tls" == "1" && "$name" == "default_name" ]]; then
-    # 当 tls 是 1 且 name 是 "default_name" 时执行的命令
-    /usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --tls true --install
-    # 在这里放置你需要执行的具体命令
+	# 当 tls 是 1 且 name 是 "default_name" 时执行的命令
+	/usr/bin/ak_monitor_client_rs -s "$server" -a "$auth_token" -f "$fake_times" -i "$collection_interval" --monitor-path "$monitor_path" --tls true --install
+	# 在这里放置你需要执行的具体命令
 else
-    # 如果 tls 不是 0 或 1，则给出提示信息
-echo "TLS 参数必须是 0 / 1 "
-exit 1
+	# 如果 tls 不是 0 或 1，则给出提示信息
+	echo "TLS 参数必须是 0 / 1 "
+	exit 1
 fi
