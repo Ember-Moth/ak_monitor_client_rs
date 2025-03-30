@@ -110,7 +110,7 @@ if [ $# != 0 ]; then
 		exit 1
 	fi
 
-	wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE"
+	wget -O /usr/bin/ak_monitor_client_rs "https://ghfast.top/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE"
 	chmod 777 /usr/bin/ak_monitor_client_rs
 	# 检查 tls 是否为 0 或 1 并且 name 是否为空或非空
 	if [[ "$tls" == "0" || -z "$tls" && -n "$name" ]]; then
@@ -132,7 +132,7 @@ if [ $# != 0 ]; then
 	exit 0
 fi
 
-wget -O /usr/bin/ak_monitor_client_rs "https://ghp.ci/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE-upxed"
+wget -O /usr/bin/ak_monitor_client_rs "https://ghfast.top/https://github.com/GenshinMinecraft/ak_monitor_client_rs/releases/download/latest/$CLIENT_FILE-upxed"
 chmod 777 /usr/bin/ak_monitor_client_rs
 
 get_input() {
